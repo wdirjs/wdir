@@ -1,0 +1,33 @@
+{
+  "name": "wdir",
+  "description": "Directory watcher and plugin-based CLI toolkit",
+  "version": "1.0.0",
+  "keywords": [
+    "cli",
+    "directory",
+    "watch",
+    "plugin",
+    "typescript"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write ."
+  },
+  "author": "MOJTABA5858",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "chalk": "^5.5.0",
+    "chokidar": "^4.0.3",
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@typescript-eslint/parser": "^8.39.0",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  }
+}
