@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Command } from "commander";
 import loadPlugins from "./modules/pluginLoader";
 import ConfigLoader from "./modules/configLoader";

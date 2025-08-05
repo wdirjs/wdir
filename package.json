@@ -19,6 +19,9 @@
   "author": "MOJTABA5858",
   "license": "MIT",
   "type": "commonjs",
+  "bin": {
+    "wdir": "./dist/index.js"
+  },
   "dependencies": {
     "chalk": "^5.5.0",
     "chokidar": "^4.0.3",
