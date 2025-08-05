@@ -18,8 +18,7 @@ async function loadPlugins(
   for (const folder of pluginFolders) {
     const pluginPath = path.join(pluginsDir, folder);
     const manifestPath = path.join(pluginPath, "manifest.json");
-    const tsEntry = path.join(pluginPath, "src", "index.ts");
-    const jsEntry = path.join(pluginPath, "src", "index.js");
+    const entryFile = path.join(pluginPath, "src", "index.js");
 
     if (!fs.existsSync(manifestPath)) continue;
 
@@ -28,10 +27,10 @@ async function loadPlugins(
     const resolvedLogLevel = manifest.logLevel || config.log.level;
     const logger = new Debugger({ ...config.log, level: resolvedLogLevel }, pluginName);
 
-    const indexPath = fs.existsSync(tsEntry) ? tsEntry : fs.existsSync(jsEntry) ? jsEntry : null;
+    const indexPath = fs.existsSync(entryFile);
     if (!indexPath) continue;
 
-    const pluginModule = await import(indexPath);
+    const pluginModule = await import(entryFile);
 
     if (typeof pluginModule.default === "function") {
       const api: WdirPluginAPI = {
@@ -47,6 +46,8 @@ async function loadPlugins(
       };
 
       pluginModule.default(api);
+
+      logger.info(`Plugin "${pluginName}" loaded successfully.`);
     }
   }
 }
