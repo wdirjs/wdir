@@ -17,7 +17,7 @@ async function loadPlugins(
 
   for (const folder of pluginFolders) {
     const pluginPath = path.join(pluginsDir, folder);
-    const manifestPath = path.join(pluginPath, "manifest.json");
+    const manifestPath = path.join(pluginPath, "src", "manifest.json");
     const entryFile = path.join(pluginPath, "src", "index.js");
 
     if (!fs.existsSync(manifestPath)) continue;
