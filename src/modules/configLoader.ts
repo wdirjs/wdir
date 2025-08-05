@@ -21,9 +21,9 @@ class ConfigLoader {
   /**
    * Loads the configuration from the `wdir.config.json` file.
    * * If the file does not exist or is invalid, it returns the default configuration.
-   * 
+   *
    * @returns The loaded configuration object.
-   * 
+   *
    * @throws Will throw an error if the configuration file cannot be loaded or is invalid.
    */
   static load(): WdirConfig {
@@ -32,7 +32,7 @@ class ConfigLoader {
         return ConfigLoader.config;
       }
 
-      const config = require(path.resolve("src/wdir.config.json")) as WdirConfig;
+      const config = require(path.join(process.cwd(), "src", "wdir.config.json")) as WdirConfig;
 
       if (!config.log || typeof config.log !== "object") {
         throw new Error("Invalid configuration: 'log' property is required.");

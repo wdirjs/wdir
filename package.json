@@ -22,6 +22,7 @@
   "bin": {
     "wdir": "./dist/index.js"
   },
+  "types": "./dist/types/index.d.ts",
   "dependencies": {
     "chalk": "^5.5.0",
     "chokidar": "^4.0.3",
