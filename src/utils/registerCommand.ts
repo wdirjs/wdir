@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { WdirPluginRegisterCommand } from "src/types";
+import { WdirPluginRegisterCommand } from "../types/plugin";
 
 function regiterCommand(
   program: Command,
