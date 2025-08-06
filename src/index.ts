@@ -7,7 +7,7 @@ import path from "path";
 import startWatching, { getWatcher } from "./modules/watcher";
 import Debugger from "./core/debugger";
 
-const packageJson = require(path.join(process.cwd(), "package.json")) as {
+const packageJson = require(path.join(__dirname, "../package.json")) as {
   name: string;
   description: string;
   version: string;
