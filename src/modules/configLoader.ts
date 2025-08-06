@@ -32,7 +32,7 @@ class ConfigLoader {
         return ConfigLoader.config;
       }
 
-      const config = require(path.join(process.cwd(), "src", "wdir.config.json")) as WdirConfig;
+      const config = require(path.join(__dirname, "../wdir.config.json")) as WdirConfig;
 
       if (!config.log || typeof config.log !== "object") {
         throw new Error("Invalid configuration: 'log' property is required.");

@@ -1,20 +1,18 @@
 import { Command } from "commander";
 import type { LoggerConfig } from "./log";
-import type { PluginManifest } from "./plugin";
+import type { WdirPluginMetadata, WdirPluginRegisterCommand } from "./plugin";
 import Debugger from "../core/debugger";
+import { WdirWatcher } from "./watcher";
 
 interface WdirPluginAPI {
   program: Command;
   logger: Debugger;
-  watch: {
-    on(event: "change" | "add" | "unlink", cb: (file: string) => void): void;
-  };
+  watch: { on: WdirWatcher["on"] };
   config: WdirConfig;
   version: string;
-  plugin: {
-    name: string;
-    meta: PluginManifest;
-  };
+  path: string;
+  plugin: WdirPluginMetadata;
+  registerCommand: (command: WdirPluginRegisterCommand) => void;
 }
 
 interface WdirConfig {

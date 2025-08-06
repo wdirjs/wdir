@@ -1,18 +1,19 @@
 import fs from "fs";
 import path from "path";
-import { Command } from "commander";
-import type { WdirConfig, WdirPluginAPI } from "../types/wdir";
-import type { PluginManifest } from "../types/plugin";
+import type { WdirPluginAPI } from "../types/wdir";
+import type { PluginLoaderConfig, PluginManifest } from "../types/plugin";
 import Debugger from "../core/debugger";
+import registerCommand from "../utils/registerCommand";
 
 const pluginsDir = path.resolve(__dirname, "../plugins");
 
-async function loadPlugins(
-  program: Command,
-  config: WdirConfig,
-  watch: WdirPluginAPI["watch"],
-  version: string
-) {
+async function loadPlugins({
+  getWatchPath,
+  program,
+  version,
+  watcher,
+  wdirConfig,
+}: PluginLoaderConfig) {
   const pluginFolders = fs.readdirSync(pluginsDir);
 
   for (const folder of pluginFolders) {
@@ -24,8 +25,8 @@ async function loadPlugins(
 
     const manifest: PluginManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
     const pluginName = manifest.name;
-    const resolvedLogLevel = manifest.logLevel || config.log.level;
-    const logger = new Debugger({ ...config.log, level: resolvedLogLevel }, pluginName);
+    const resolvedLogLevel = manifest.logLevel || wdirConfig.log.level;
+    const logger = new Debugger({ ...wdirConfig.log, level: resolvedLogLevel }, pluginName);
 
     const indexPath = fs.existsSync(entryFile);
     if (!indexPath) continue;
@@ -36,9 +37,11 @@ async function loadPlugins(
       const api: WdirPluginAPI = {
         program,
         logger,
-        watch,
-        config,
+        watch: watcher,
+        config: wdirConfig,
         version,
+        path: getWatchPath(),
+        registerCommand: (command) => registerCommand(program, getWatchPath(), command),
         plugin: {
           name: pluginName,
           meta: manifest,

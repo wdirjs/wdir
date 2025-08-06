@@ -1,7 +1,22 @@
 import chokidar from "chokidar";
 import type { WdirWatcher } from "../types/watcher";
 
-function startWatching(pathToWatch: string, watch: WdirWatcher) {
+const watchers = {
+  change: [] as ((file: string) => void)[],
+  add: [] as ((file: string) => void)[],
+  unlink: [] as ((file: string) => void)[],
+};
+
+const watch: WdirWatcher = {
+  on(event: "change" | "add" | "unlink", cb: (file: string) => void) {
+    watchers[event].push(cb);
+  },
+  trigger(event: "change" | "add" | "unlink", file: string) {
+    for (const cb of watchers[event]) cb(file);
+  },
+};
+
+function startWatching(pathToWatch: string) {
   const watcher = chokidar.watch(pathToWatch, {
     persistent: true,
   });
@@ -11,4 +26,9 @@ function startWatching(pathToWatch: string, watch: WdirWatcher) {
   watcher.on("unlink", (path) => watch.trigger("unlink", path));
 }
 
+function getWatcher(): WdirWatcher {
+  return watch;
+}
+
+export { getWatcher };
 export default startWatching;
