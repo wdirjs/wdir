@@ -5,6 +5,7 @@ import loadPlugins from "./modules/pluginLoader";
 import ConfigLoader from "./modules/configLoader";
 import path from "path";
 import startWatching, { getWatcher } from "./modules/watcher";
+import Debugger from "./core/debugger";
 
 const packageJson = require(path.join(process.cwd(), "package.json")) as {
   name: string;
@@ -13,8 +14,12 @@ const packageJson = require(path.join(process.cwd(), "package.json")) as {
   [x: string]: any;
 };
 const config = ConfigLoader.load();
+const logger = Debugger.getInstance(config.log);
 const watcher = getWatcher();
 let currentWatchPath = ".";
+
+logger.info(`Starting ${packageJson.name} v${packageJson.version}`);
+logger.debug("Registering commands and loading plugins...");
 
 const program = new Command();
 program
@@ -41,9 +46,7 @@ program.command("*", { hidden: true }).action(() => {
     getWatchPath: () => currentWatchPath,
   });
 
-  if (!program.args.length || program.args[0] === undefined) {
-    startWatching(currentWatchPath);
-  }
+  startWatching(currentWatchPath);
 
   program.parse(process.argv);
 })();
