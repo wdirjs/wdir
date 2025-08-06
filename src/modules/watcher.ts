@@ -1,5 +1,6 @@
 import chokidar from "chokidar";
 import type { WdirWatcher } from "../types/watcher";
+import Debugger from "../core/debugger";
 
 const watchers = {
   change: [] as ((file: string) => void)[],
@@ -17,13 +18,27 @@ const watch: WdirWatcher = {
 };
 
 function startWatching(pathToWatch: string) {
+  const logger = Debugger.getInstance();
+  logger.info(`Starting watcher on path: ${pathToWatch}`);
+
   const watcher = chokidar.watch(pathToWatch, {
     persistent: true,
   });
 
-  watcher.on("add", (path) => watch.trigger("add", path));
-  watcher.on("change", (path) => watch.trigger("change", path));
-  watcher.on("unlink", (path) => watch.trigger("unlink", path));
+  watcher.on("add", (path) => {
+    watch.trigger("add", path);
+    logger.debug(`File added: ${path}`);
+  });
+  watcher.on("change", (path) => {
+    watch.trigger("change", path);
+    logger.debug(`File changed: ${path}`);
+  });
+  watcher.on("unlink", (path) => {
+    watch.trigger("unlink", path);
+    logger.debug(`File unlinked: ${path}`);
+  });
+
+  logger.info(`Watching started on: ${pathToWatch}`);
 }
 
 function getWatcher(): WdirWatcher {
