@@ -1,4 +1,4 @@
-type LogLevel = "silent" | "error" | "warn" | "info" | "debug";
+type LogLevel = "silent" | "error" | "warn" | "info" | "debug" | "verbose";
 type OutputType = "console" | "file";
 
 interface LoggerConfig {
@@ -36,7 +36,7 @@ interface LoggerConfig {
    * @example { "minify": "debug", "watcher": "warn" }
    * @default {}
    */
-  pluginLevels?: Record<string, LogLevel>;
+  pluginLevels?: Record<string, LogLevel> | undefined;
 }
 
 export type { LogLevel, OutputType, LoggerConfig };
