@@ -30,6 +30,9 @@ program.command("*", { hidden: true }).action(() => {
 });
 
 (async () => {
+  program.parseOptions(process.argv);
+  currentWatchPath = program.opts().dir;
+
   await loadPlugins({
     program,
     wdirConfig: config,
@@ -39,7 +42,6 @@ program.command("*", { hidden: true }).action(() => {
   });
 
   if (!program.args.length || program.args[0] === undefined) {
-    currentWatchPath = program.opts().dir;
     startWatching(currentWatchPath);
   }
 
