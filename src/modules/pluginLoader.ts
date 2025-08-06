@@ -14,6 +14,9 @@ async function loadPlugins({
   watcher,
   wdirConfig,
 }: PluginLoaderConfig) {
+  const coreLogger = Debugger.getInstance();
+  coreLogger.debug("Starting plugin loader...");
+
   const pluginFolders = fs.readdirSync(pluginsDir);
 
   for (const folder of pluginFolders) {
@@ -21,38 +24,57 @@ async function loadPlugins({
     const manifestPath = path.join(pluginPath, "src", "manifest.json");
     const entryFile = path.join(pluginPath, "src", "index.js");
 
-    if (!fs.existsSync(manifestPath)) continue;
+    if (!fs.existsSync(manifestPath)) {
+      coreLogger.debug(`Skipping ${folder} - no manifest found!`);
+      continue;
+    }
 
     const manifest: PluginManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
     const pluginName = manifest.name;
     const resolvedLogLevel = manifest.logLevel || wdirConfig.log.level;
-    const logger = new Debugger({ ...wdirConfig.log, level: resolvedLogLevel }, pluginName);
 
-    const indexPath = fs.existsSync(entryFile);
-    if (!indexPath) continue;
+    const pluginLogger = coreLogger.createContext(pluginName, manifest.logLevel);
 
-    const pluginModule = await import(entryFile);
+    if (!fs.existsSync(entryFile)) {
+      pluginLogger.warn(`No entry file found in ${pluginName}`);
+      continue;
+    }
 
-    if (typeof pluginModule.default === "function") {
-      const api: WdirPluginAPI = {
-        program,
-        logger,
-        watch: watcher,
-        config: wdirConfig,
-        version,
-        path: getWatchPath(),
-        registerCommand: (command) => registerCommand(program, getWatchPath(), command),
-        plugin: {
-          name: pluginName,
-          meta: manifest,
-        },
-      };
+    try {
+      const pluginModule = await import(entryFile);
 
-      pluginModule.default(api);
+      if (typeof pluginModule.default === "function") {
+        const api: WdirPluginAPI = {
+          program,
+          logger: pluginLogger,
+          watch: watcher,
+          config: {
+            ...wdirConfig,
+            log: {
+              ...wdirConfig.log,
+              level: wdirConfig.log.pluginLevels?.[pluginName] || resolvedLogLevel,
+            },
+          },
+          version,
+          path: getWatchPath(),
+          registerCommand: (command) => registerCommand(program, getWatchPath(), command),
+          plugin: {
+            name: pluginName,
+            meta: manifest,
+          },
+        };
 
-      logger.info(`Plugin "${pluginName}" loaded successfully.`);
+        pluginModule.default(api);
+        pluginLogger.info(`Loaded successfully`);
+      }
+    } catch (error) {
+      pluginLogger.error(
+        `Failed to load: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
+
+  coreLogger.debug(`Loaded ${pluginFolders.length} plugins`);
 }
 
 export default loadPlugins;
