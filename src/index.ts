@@ -49,4 +49,5 @@ program.command("*", { hidden: true }).action(() => {
   startWatching(currentWatchPath);
 
   program.parse(process.argv);
+  process.title = `${packageJson.name.toUpperCase()} v${packageJson.version}`;
 })();
