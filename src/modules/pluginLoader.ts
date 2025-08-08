@@ -22,7 +22,6 @@ async function loadPlugins({
   for (const folder of pluginFolders) {
     const pluginPath = path.join(pluginsDir, folder);
     const manifestPath = path.join(pluginPath, "src", "manifest.json");
-    const entryFile = path.join(pluginPath, "src", "index.js");
 
     if (!fs.existsSync(manifestPath)) {
       coreLogger.debug(`Skipping ${folder} - no manifest found!`);
@@ -30,7 +29,8 @@ async function loadPlugins({
     }
 
     const manifest: PluginManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-    const pluginName = manifest.name;
+    const { entry, name: pluginName } = manifest;
+    const entryFile = path.join(pluginPath, "src", entry.endsWith(".js") ? entry : entry + ".js");
     const resolvedLogLevel = manifest.logLevel || wdirConfig.log.level;
 
     const pluginLogger = coreLogger.createContext(pluginName, manifest.logLevel);

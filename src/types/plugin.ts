@@ -5,6 +5,7 @@ import { WdirWatcher } from "./watcher";
 
 interface PluginManifest {
   name: string;
+  entry: string;
   description?: string;
   version?: string;
   author?: string;
