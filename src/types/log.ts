@@ -1,5 +1,8 @@
-type LogLevel = "silent" | "error" | "warn" | "info" | "debug" | "verbose";
-type OutputType = "console" | "file";
+const logLevel = ["silent", "info", "debug", "warn", "error", "verbose"] as const;
+const outputType = ["console", "file"];
+
+type LogLevel = typeof logLevel[number];
+type OutputType = typeof outputType[number];
 
 interface LoggerConfig {
   /**
@@ -39,4 +42,5 @@ interface LoggerConfig {
   pluginLevels?: Record<string, LogLevel> | undefined;
 }
 
+export { logLevel, outputType };
 export type { LogLevel, OutputType, LoggerConfig };

@@ -1,8 +1,8 @@
 import { Command } from "commander";
 import type { LoggerConfig } from "./log";
-import type { WdirPluginMetadata, WdirPluginRegisterCommand } from "./plugin";
+import type { PluginConfig, WdirPluginMetadata, WdirPluginRegisterCommand } from "./plugin";
 import Debugger from "../core/debugger";
-import { WdirWatcher } from "./watcher";
+import type { WdirWatcher } from "./watcher";
 
 interface WdirPluginAPI {
   program: Command;
@@ -17,6 +17,25 @@ interface WdirPluginAPI {
 
 interface WdirConfig {
   log: LoggerConfig;
+  plugin: PluginConfig;
 }
 
-export type { WdirPluginAPI, WdirConfig };
+type ConfigKeyValue = {
+  [K in keyof WdirConfig]: {
+    [P in keyof WdirConfig[K]]: `${K}.${P & string}`;
+  }[keyof WdirConfig[K]];
+}[keyof WdirConfig];
+
+type ConfigValue<T extends ConfigKeyValue> = T extends `log.level`
+  ? WdirConfig["log"]["level"]
+  : T extends `log.output`
+  ? WdirConfig["log"]["output"]
+  : T extends `log.file`
+  ? string
+  : T extends `plugin.active`
+  ? boolean
+  : T extends `plugin.path`
+  ? string
+  : never;
+
+export type { ConfigKeyValue, ConfigValue, WdirPluginAPI, WdirConfig };

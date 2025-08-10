@@ -4,7 +4,7 @@
 The core is **open-source**, but plugins can be open-source or private — making it flexible for personal or commercial use.
 
 ![License](https://img.shields.io/github/license/mojtaba5858/wdir)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
 
 ---
 
@@ -52,6 +52,10 @@ Example:
   "log": {
     "level": "info",
     "output": "console"
+  },
+  "plugin": {
+    "active": true,
+    "path": "path/to/plugins/folder"
   }
 }
 ```
@@ -71,7 +75,13 @@ Example:
 
 ## 📂 Plugin Structure
 
-A plugin lives in `/plugins/{plugin-name}/`.
+A plugin lives in root of the wdir in `/plugins/{plugin-name}/` by default. But you can also set path of plugins by this command:
+
+```sh
+npx wdir --config plugin.path="path/to/plugins/folder"
+# or if installed globally
+wdir --config plugin.path="path/to/plugins/folder"
+```
 
 Example:
 
@@ -91,7 +101,7 @@ plugins/
   "entry": "index.bundle.js",
   "description": "Some description goes here...",
   "version": "1.0.0",
-  "author": "HorizonMC",
+  "author": "YourName",
   "logLevel": "info"
 }
 ```
@@ -133,7 +143,7 @@ export default function (api: WdirPluginAPI) {
 
 ---
 
-## 🔌 Developing Plugins Outside `/plugins`
+## 🔌 Developing Plugins
 
 You can create a standalone plugin in a separate repo:
 

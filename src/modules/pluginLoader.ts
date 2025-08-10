@@ -3,9 +3,7 @@ import path from "path";
 import type { WdirPluginAPI } from "../types/wdir";
 import type { PluginLoaderConfig, PluginManifest } from "../types/plugin";
 import Debugger from "../core/debugger";
-import registerCommand from "../utils/registerCommand";
-
-const pluginsDir = path.resolve(__dirname, "../plugins");
+import { registerCommand } from "../utils";
 
 async function loadPlugins({
   getWatchPath,
@@ -17,6 +15,9 @@ async function loadPlugins({
   const coreLogger = Debugger.getInstance();
   coreLogger.debug("Starting plugin loader...");
 
+  const pluginsDir = wdirConfig.plugin.path
+    ? path.resolve(wdirConfig.plugin.path)
+    : path.resolve(__dirname, "../plugins");
   const pluginFolders = fs.readdirSync(pluginsDir);
 
   for (const folder of pluginFolders) {

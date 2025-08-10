@@ -57,4 +57,20 @@ interface WdirPluginRegisterCommand {
   aliases?: string[];
 }
 
-export type { PluginManifest, PluginLoaderConfig, WdirPluginMetadata, WdirPluginRegisterCommand };
+type PluginConfig =
+  | {
+      active: true;
+      path: string;
+    }
+  | {
+      active: false;
+      path?: undefined;
+    };
+
+export type {
+  PluginConfig,
+  PluginManifest,
+  PluginLoaderConfig,
+  WdirPluginMetadata,
+  WdirPluginRegisterCommand,
+};

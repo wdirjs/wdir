@@ -2,5 +2,9 @@
   "log": {
     "level": "info",
     "output": "console"
+  },
+  "plugin": {
+    "active": true,
+    "path": "H:\\test"
   }
 }

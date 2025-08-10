@@ -6,6 +6,8 @@ import ConfigLoader from "./modules/configLoader";
 import path from "path";
 import startWatching, { getWatcher } from "./modules/watcher";
 import Debugger from "./core/debugger";
+import { parseConfig } from "./utils";
+import { ConfigKeyValue, ConfigValue, logLevel, outputType } from "./types";
 
 const packageJson = require(path.join(__dirname, "../package.json")) as {
   name: string;
@@ -18,8 +20,7 @@ const logger = Debugger.getInstance(config.log);
 const watcher = getWatcher();
 let currentWatchPath = ".";
 
-logger.info(`Starting ${packageJson.name} v${packageJson.version}`);
-logger.debug("Registering commands and loading plugins...");
+logger.debug("Registering commands...");
 
 const program = new Command();
 program
@@ -27,7 +28,20 @@ program
   .version(packageJson.version, "-v, --version", "Output the current version")
   .description(packageJson.description)
   .helpOption("-h, --help", "Display help for command")
-  .option("-d, --dir <dir>", "Directory to watch", ".");
+  .option("-d, --dir <dir>", "Directory to watch", ".")
+  .option("-c, --config <name>=<value>", "Key-value config", parseConfig, []);
+
+program.addHelpText(
+  "after",
+  `
+Available Configs (--config <name>=<value>):
+  - log.level=<${logLevel.join("|")}>       Set level of the log for CORE
+  - log.output=<${outputType.join("|")}>                              Set environment
+  - log.file=<path>                                        Set path of the log file (optional unless log.output set to file)
+  - plugin.active=<boolean>                                Set true or false for plugin activision (by default is true)
+  - plugin.path=<path>                                     Set path of the plugins folder (by default is __dirname/../plugins)
+`
+);
 
 program.command("*", { hidden: true }).action(() => {
   console.error("Invalid command. Use --help or -h for available commands.");
@@ -37,6 +51,28 @@ program.command("*", { hidden: true }).action(() => {
 (async () => {
   program.parseOptions(process.argv);
   currentWatchPath = program.opts().dir;
+
+  const cliConfigs = program.opts().config as {
+    key: ConfigKeyValue;
+    value: ConfigValue<ConfigKeyValue>;
+  }[];
+  if (cliConfigs.length) {
+    for (const { key, value } of cliConfigs) {
+      try {
+        ConfigLoader.overwriteConfig(key, value);
+        logger.debug(`Config updated: ${key} = ${JSON.stringify(value)}`);
+      } catch (err) {
+        logger.error(
+          `Failed to update config: ${key} -> ${err instanceof Error ? err.message : String(err)}`
+        );
+        process.exit(1);
+      }
+    }
+
+    process.exit();
+  }
+
+  logger.debug("Loading plugins...");
 
   await loadPlugins({
     program,
@@ -50,4 +86,6 @@ program.command("*", { hidden: true }).action(() => {
 
   program.parse(process.argv);
   process.title = `${packageJson.name.toUpperCase()} v${packageJson.version}`;
+
+  logger.info(`Started ${packageJson.name} v${packageJson.version}`);
 })();
