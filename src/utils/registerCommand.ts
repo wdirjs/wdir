@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { WdirPluginRegisterCommand } from "../types/plugin";
 
-function regiterCommand(
+function registerCommand(
   program: Command,
   watchPath: string,
   { action, description, name, options, aliases }: WdirPluginRegisterCommand
@@ -21,4 +21,4 @@ function regiterCommand(
   program.addCommand(cmd);
 }
 
-export default regiterCommand;
+export default registerCommand;
