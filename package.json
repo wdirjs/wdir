@@ -1,7 +1,7 @@
 {
   "name": "wdir",
   "description": "Directory watcher and plugin-based CLI toolkit",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "keywords": [
     "cli",
     "directory",
@@ -10,9 +10,9 @@
     "typescript"
   ],
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc",
-    "postbuild": "cpx \"src/**/*.json\" dist",
+    "dev": "npx tsc --watch",
+    "build": "npx tsc",
+    "postbuild": "npx cpx \"src/**/*.json\" dist",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write ."
   },
