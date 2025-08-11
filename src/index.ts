@@ -20,7 +20,7 @@ const logger = Debugger.getInstance(config.log);
 const watcher = getWatcher();
 let currentWatchPath = ".";
 
-logger.debug("Registering commands...");
+logger.debug("Registering CORE commands...");
 
 const program = new Command();
 program
@@ -47,6 +47,8 @@ program.command("*", { hidden: true }).action(() => {
   console.error("Invalid command. Use --help or -h for available commands.");
   process.exit(1);
 });
+
+logger.debug("CORE commands has been registered...");
 
 (async () => {
   program.parseOptions(process.argv);

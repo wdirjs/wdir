@@ -4,7 +4,6 @@
     "output": "console"
   },
   "plugin": {
-    "active": true,
-    "path": "H:\\test"
+    "active": true
   }
 }
