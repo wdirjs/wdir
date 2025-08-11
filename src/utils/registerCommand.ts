@@ -1,10 +1,10 @@
 import { Command } from "commander";
-import { WdirPluginRegisterCommand } from "../types/plugin";
+import type { PluginRegisterCommand } from "../types";
 
 function registerCommand<T extends Array<string> | string | boolean>(
   program: Command,
   watchPath: string,
-  { action, description, name, options, aliases }: WdirPluginRegisterCommand<T>
+  { action, description, name, options, aliases }: PluginRegisterCommand
 ) {
   const cmd = new Command(name).description(description).action(() => {
     action(watchPath, cmd.opts());
@@ -14,10 +14,33 @@ function registerCommand<T extends Array<string> | string | boolean>(
     cmd.aliases(aliases);
   }
 
-  for (const { description, flag, defaultValue, parser } of options) {
-    parser
-      ? cmd.option(flag, description, parser, defaultValue)
-      : cmd.option(flag, description, defaultValue);
+  for (const option of options) {
+    if ("parser" in option && typeof option.parser === "function") {
+      if (Array.isArray(option.defaultValue)) {
+        cmd.option(
+          option.flag,
+          option.description,
+          option.parser as (value: string, previous: string[]) => string[],
+          option.defaultValue
+        );
+      } else if (typeof option.defaultValue === "boolean") {
+        cmd.option(
+          option.flag,
+          option.description,
+          option.parser as (value: string, previous: boolean) => boolean,
+          option.defaultValue
+        );
+      } else {
+        cmd.option(
+          option.flag,
+          option.description,
+          option.parser as (value: string, previous: string) => string,
+          option.defaultValue
+        );
+      }
+    } else {
+      cmd.option(option.flag, option.description, option.defaultValue);
+    }
   }
 
   program.addCommand(cmd);

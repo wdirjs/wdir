@@ -1,7 +1,7 @@
 {
   "name": "wdir",
   "description": "Directory watcher and plugin-based CLI toolkit",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "keywords": [
     "cli",
     "directory",

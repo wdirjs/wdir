@@ -1,6 +1,10 @@
 import { Command } from "commander";
 import type { LoggerConfig } from "./log";
-import type { PluginConfig, WdirPluginMetadata, WdirPluginRegisterCommand } from "./plugin";
+import type {
+  PluginConfig,
+  WdirPluginMetadata,
+  PluginRegisterCommand,
+} from "./plugin";
 import Debugger from "../core/debugger";
 import type { WdirWatcher } from "./watcher";
 
@@ -12,7 +16,7 @@ interface WdirPluginAPI {
   version: string;
   path: string;
   plugin: WdirPluginMetadata;
-  registerCommand: <T extends Array<string> | string | boolean>(command: WdirPluginRegisterCommand<T>) => void;
+  registerCommand: (command: PluginRegisterCommand) => void;
 }
 
 interface WdirConfig {

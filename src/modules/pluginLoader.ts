@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import type { WdirPluginAPI } from "../types/wdir";
-import type { PluginLoaderConfig, PluginManifest } from "../types/plugin";
+import type { WdirPluginAPI } from "../types";
+import type { PluginLoaderConfig, PluginManifest } from "../types";
 import Debugger from "../core/debugger";
 import { registerCommand } from "../utils";
 

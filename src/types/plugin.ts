@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import type { LogLevel } from "./log";
-import { WdirConfig } from "./wdir";
-import { WdirWatcher } from "./watcher";
+import type { WdirConfig } from "./wdir";
+import type { WdirWatcher } from "./watcher";
 
 interface PluginManifest {
   name: string;
@@ -25,7 +25,7 @@ interface WdirPluginMetadata {
   meta: PluginManifest;
 }
 
-interface WdirPluginRegisterCommand<T extends Array<string> | string | boolean> {
+interface PluginRegisterCommandBase {
   /**
    * The name of the command.
    */
@@ -35,11 +35,6 @@ interface WdirPluginRegisterCommand<T extends Array<string> | string | boolean> 
    * A brief description of the command.
    */
   description: string;
-
-  /**
-   * An array of option objects, each containing a flag and description.
-   */
-  options: Array<WdirPluginRegisterCommandOption<T>>;
 
   /**
    * The action to execute when the command is invoked.
@@ -53,7 +48,43 @@ interface WdirPluginRegisterCommand<T extends Array<string> | string | boolean> 
   aliases?: string[];
 }
 
-interface WdirPluginRegisterCommandOption<T extends Array<string> | string | boolean> {
+type PluginRegisterCommandAnyOption =
+  | PluginRegisterCommandOption
+  | PluginRegisterCommandOptionWithParser<string>
+  | PluginRegisterCommandOptionWithParser<boolean>
+  | PluginRegisterCommandOptionWithParser<string[]>;
+
+interface PluginRegisterCommand extends PluginRegisterCommandBase {
+  /**
+   * An array of option objects, each containing a flag and description.
+   */
+  options: Array<PluginRegisterCommandAnyOption>;
+}
+
+interface PluginRegisterCommandOption {
+  /**
+   * The flag(s) for the option, in Commander.js format.
+   * Examples:
+   *  - "-p, --port <number>"
+   *  - "-d, --debug"
+   *  - "-t, --tags <tag...>"
+   */
+  flag: string;
+
+  /**
+   * A short description of what the option does.
+   * Shown automatically in `--help` output.
+   */
+  description: string;
+
+  /**
+   * The default value used if the option is not provided by the user.
+   * Must match the `T` or return type of `parser` if used.
+   */
+  defaultValue?: Array<string> | string | boolean;
+}
+
+interface PluginRegisterCommandOptionWithParser<T extends Array<string> | string | boolean> {
   /**
    * The flag(s) for the option, in Commander.js format.
    * Examples:
@@ -98,6 +129,7 @@ export type {
   PluginManifest,
   PluginLoaderConfig,
   WdirPluginMetadata,
-  WdirPluginRegisterCommand,
-  WdirPluginRegisterCommandOption,
+  PluginRegisterCommand,
+  PluginRegisterCommandOption,
+  PluginRegisterCommandOptionWithParser,
 };
