@@ -25,7 +25,7 @@ interface WdirPluginMetadata {
   meta: PluginManifest;
 }
 
-interface WdirPluginRegisterCommand {
+interface WdirPluginRegisterCommand<T extends Array<string> | string | boolean> {
   /**
    * The name of the command.
    */
@@ -39,11 +39,7 @@ interface WdirPluginRegisterCommand {
   /**
    * An array of option objects, each containing a flag and description.
    */
-  options: Array<{
-    flag: string;
-    description: string;
-    defaultValue?: string | boolean;
-  }>;
+  options: Array<WdirPluginRegisterCommandOption<T>>;
 
   /**
    * The action to execute when the command is invoked.
@@ -55,6 +51,36 @@ interface WdirPluginRegisterCommand {
    * Optional Aliases for the command.
    */
   aliases?: string[];
+}
+
+interface WdirPluginRegisterCommandOption<T extends Array<string> | string | boolean> {
+  /**
+   * The flag(s) for the option, in Commander.js format.
+   * Examples:
+   *  - "-p, --port <number>"
+   *  - "-d, --debug"
+   *  - "-t, --tags <tag...>"
+   */
+  flag: string;
+
+  /**
+   * A short description of what the option does.
+   * Shown automatically in `--help` output.
+   */
+  description: string;
+
+  /**
+   * The default value used if the option is not provided by the user.
+   * Must match the `T` or return type of `parser` if used.
+   */
+  defaultValue?: T;
+
+  /**
+   * A parser function that transforms the raw CLI input (string)
+   * into the desired type `T` (string, boolean, or string[]).
+   * Runs each time the option appears in the command.
+   */
+  parser?: (value: string, previous: T) => T;
 }
 
 type PluginConfig =
@@ -73,4 +99,5 @@ export type {
   PluginLoaderConfig,
   WdirPluginMetadata,
   WdirPluginRegisterCommand,
+  WdirPluginRegisterCommandOption,
 };

@@ -1,10 +1,10 @@
 import { Command } from "commander";
 import { WdirPluginRegisterCommand } from "../types/plugin";
 
-function registerCommand(
+function registerCommand<T extends Array<string> | string | boolean>(
   program: Command,
   watchPath: string,
-  { action, description, name, options, aliases }: WdirPluginRegisterCommand
+  { action, description, name, options, aliases }: WdirPluginRegisterCommand<T>
 ) {
   const cmd = new Command(name).description(description).action(() => {
     action(watchPath, cmd.opts());
@@ -14,8 +14,10 @@ function registerCommand(
     cmd.aliases(aliases);
   }
 
-  for (const { description, flag, defaultValue } of options) {
-    cmd.option(flag, description, defaultValue);
+  for (const { description, flag, defaultValue, parser } of options) {
+    parser
+      ? cmd.option(flag, description, parser, defaultValue)
+      : cmd.option(flag, description, defaultValue);
   }
 
   program.addCommand(cmd);
