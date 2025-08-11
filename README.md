@@ -4,7 +4,7 @@
 The core is **open-source**, but plugins can be open-source or private — making it flexible for personal or commercial use.
 
 ![License](https://img.shields.io/github/license/mojtaba5858/wdir)
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.1-blue)
 
 ---
 

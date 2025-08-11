@@ -12,7 +12,7 @@ interface WdirPluginAPI {
   version: string;
   path: string;
   plugin: WdirPluginMetadata;
-  registerCommand: (command: WdirPluginRegisterCommand) => void;
+  registerCommand: <T extends Array<string> | string | boolean>(command: WdirPluginRegisterCommand<T>) => void;
 }
 
 interface WdirConfig {
